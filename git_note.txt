@@ -1,0 +1,109 @@
+/****************************************git命令及其作用注释******************************************/
+
+mkdir learngit
+
+cd learngit 
+进入文件目录
+
+pwd 
+显示当前目录（为了避免出现错误，尽量文件目录中不要出现中文）
+
+git init 
+初始化（创建一个可以管理的仓库），并且这个库是空的（.git文件不要随意修改，这个目录是Git
+来跟踪管理版本库的）
+
+ls -ah 
+(是l不是i) 可以看见隐藏的.git 目录
+
+git add filename
+将文件 添加 到git库中
+
+git commit -m "wrote a readme file"（下面是说明）
+[master (root-commit) d5b1173] wrote a readme file
+ 1 file changed, 2 insertions(+)
+ create mode 100644 readme.txt
+git commit 命令告诉git 将文件 提交 到仓库中 -m是本次提交的说明
+1 file changed：1个文件被改动（我们新添加的readme.txt文件）；
+2 insertions：插入了两行内容（readme.txt有两行内容）。
+需要注意的是，可以一次性添加许多个文件，然后一次commit许多文件
+git commit只会提交暂存区的文件，也就是说如果文件已经add了，再修改，要么commit后重新add和commit，
+要么重新add后commit
+
+git log （--pretty=oneline）
+显示最近到最远的提交日志，后面的参数可以改变输出信息
+
+git reset --hard HEAD^
+HEAD is now at d5b1173 wrote a readme file
+Git必须知道当前版本是哪个版本，在Git中，用HEAD表示当前版本，也就是最新的提交98e35...
+（注意我的提交ID和你的肯定不一样），上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个
+版本写100个^比较容易数不过来，所以写成HEAD~100。
+虽然回退了，但是我们发现最新版本的那个文件已经消失不见了，如何回到最新版本呢？
+使用命令 git reset --hard 98e35  (98e35)是最新的commit id的前缀（最好具有识别关系）
+
+cat readme.txt
+显示文本中的内容
+
+git reflog
+记录每一次命令显示出来
+
+git status
+显示状态
+On branch master
+nothing to commit, working tree clean
+一般只有一个默认分支master，working tree为空，暂存区不存在文件，没有可提交的文件
+
+git checkout -- 文件名
+文件在工作区的修改全部撤销，这里有两种情况：
+一种是readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+一种是readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+总之，就是让这个文件回到最近一次git commit或git add时的状态。
+
+git reset HEAD 文件名
+Git同样告诉我们，用命令git reset HEAD <file>可以把暂存区的修改撤销掉（unstage），重新
+放回工作区：
+
+删除文件
+rm test.txt
+一般情况下，你通常直接在文件管理器中把没用的文件删了，或者用rm命令删了：这个时候，
+Git知道你删除了文件，因此，工作区和版本库就不一致了，git status命令会立刻告诉你哪些文件被删除了：
+
+git rm test.txt
+现在你有两个选择，一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit：
+
+git checkout -- test.txt
+另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本：
+
+/*********************推送指南*************************/
+git remote add origin git@github.com:xxx/___.git
+git remote add 
+xxx是自己的Github用户名，___是文件目录。添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改
+成别的，但是origin这个名字一看就知道是远程库。
+下一步，就可以把本地库的所有内容推送到远程库上：
+
+git push -u origin master
+
+
+/***************************************git使用注意事项************************************************/
+
+
+	不一定要在空的文件夹中创建git库，但是出现版本还原就结果会gg
+
+  	版本控制系统可以告诉你每次的改动，比如在第5行加了一个单词“Linux”，在第8行删了一个单词“
+Windows”。而图片、视频这些二进制文件，虽然也能由版本控制系统管理，但没法跟踪文件的变化，
+只能把二进制文件每次改动串起来，也就是只知道图片从100KB改成了120KB，但到底改了啥，版本
+控制系统不知道，也没法知道。
+
+	Microsoft的Word格式是二进制格式，因此，版本控制系统是没法跟踪Word文件的改动的，前面我们
+举的例子只是为了演示，如果要真正使用版本控制系统，就要以纯文本方式编写文件。
+
+	因为文本是有编码的，比如中文有常用的GBK编码，日文有Shift_JIS编码，如果没有历史遗留问题，强
+烈建议使用标准的UTF-8编码，所有语言使用同一种编码，既没有冲突，又被所有平台所支持。
+
+	千万不要使用Windows自带的记事本编辑任何文本文件。原因是Microsoft开发记事本的团队使用了一个
+非常弱智的行为来保存UTF-8编码的文件，他们自作聪明地在每个文件开头添加了0xefbbbf（十六进制）的字符，
+你会遇到很多不可思议的问题，比如，网页第一行可能会显示一个“?”，明明正确的程序一编译就报语法错误，
+等等，都是由记事本的弱智行为带来的。建议你下载Notepad++代替记事本，不但功能强大，而且免费！记得把
+Notepad++的默认编码设置为UTF-8 without BOM即可：
+
+	
+
